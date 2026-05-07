@@ -1,0 +1,2 @@
+data_input_path: ../data/census.csv
+model_output_path: ../model/rfc.pkl
