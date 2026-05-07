@@ -1,4 +1,6 @@
 from sklearn.metrics import fbeta_score, precision_score, recall_score
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import RandomizedSearchCV
 
 
 def train_model(X_train, y_train):
@@ -16,7 +18,32 @@ def train_model(X_train, y_train):
     model : RandomForestClassifier
         Trained machine learning model.
     """
-    pass
+
+    rfc = RandomForestClassifier(random_state=42)
+
+    param_dist = {
+        'n_estimators': [200, 300],
+        'max_features': ['sqrt'],
+        'max_depth': [5, 8, 10],
+        'min_samples_split': [5, 10],
+        'min_samples_leaf': [2, 4],
+        'criterion': ['gini']
+    }
+
+    cv_rfc = RandomizedSearchCV(
+        estimator=rfc,
+        param_distributions=param_dist,
+        n_iter=12,
+        cv=5,
+        scoring="f1",
+        random_state=42,
+        n_jobs=-1,
+        error_score='raise'
+    )
+
+    cv_rfc.fit(X_train, y_train)
+
+    return cv_rfc.best_estimator_
 
 
 def compute_model_metrics(y, preds):
@@ -55,4 +82,7 @@ def inference(model, X):
     preds : np.ndarray
         Predictions from the model.
     """
-    pass
+
+    preds = model.predict(X)
+    
+    return preds
