@@ -5,6 +5,7 @@ setuptools.setup(
     version="0.0.0",
     description="Starter code.",
     author="Student",
+    packages=setuptools.find_packages(include=["starter", "starter.*"]),
     # Lower bounds match pinned versions in requirements.txt;
     # upper bounds exclude the next major to avoid breaking changes.
     install_requires=[
