@@ -7,8 +7,13 @@ import yaml
 from sklearn.model_selection import train_test_split
 
 # Add the necessary imports for the starter code.
-from ml.data import process_data
-from ml.model import train_model, inference, compute_model_metrics
+try:
+    from .ml.data import process_data
+    from .ml.model import train_model, inference, compute_model_metrics
+except ImportError:
+    # Fallback for direct script execution from the package directory.
+    from ml.data import process_data
+    from ml.model import train_model, inference, compute_model_metrics
 
 # Configuration
 BASE_DIR = Path(__file__).resolve().parent
