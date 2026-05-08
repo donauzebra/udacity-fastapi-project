@@ -25,7 +25,12 @@ data = pd.read_csv(data_path)
 data.columns = (data.columns.str.strip())
 
 # Optional enhancement, use K-fold cross validation instead of a train-test split.
-train, test = train_test_split(data, test_size=0.20)
+if config["validation_method"] == "train_test":
+    train, test = train_test_split(data, test_size=0.20)
+elif config["validation_method"] == "kfold":
+    raise ValueError(f"K-Fold validation method is not implemented yet")
+else:
+    raise ValueError(f"Unkown validation method: {config["validation_method"]}")
 
 cat_features = [
     "workclass",
