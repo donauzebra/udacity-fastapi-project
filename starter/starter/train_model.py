@@ -28,7 +28,7 @@ data.columns = (data.columns.str.strip())
 if config["validation_method"] == "train_test":
     train, test = train_test_split(data, test_size=0.20)
 elif config["validation_method"] == "kfold":
-    raise ValueError(f"K-Fold validation method is not implemented yet")
+    raise ValueError("K-Fold validation method is not implemented yet")
 else:
     raise ValueError(f"Unkown validation method: {config["validation_method"]}")
 
