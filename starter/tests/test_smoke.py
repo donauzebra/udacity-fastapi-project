@@ -1,5 +1,6 @@
 """Smoke tests for the training and inference pipeline."""
 
+import importlib
 import pandas as pd
 import pytest
 
@@ -143,6 +144,12 @@ def fixture_sample_config():
 def test_pytest_runs():
     """Sanity-check that pytest can discover and execute tests."""
     assert True
+
+
+def test_train_model_module_importable():
+    """Ensure training module imports without side effects or import errors."""
+    module = importlib.import_module("starter.train_model")
+    assert module is not None
 
 
 def test_training_pipeline_runs(sample_data, sample_config):
