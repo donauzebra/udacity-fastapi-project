@@ -37,7 +37,6 @@ def train_model(X_train, y_train):
         cv=5,
         scoring="f1",
         random_state=42,
-        n_jobs=-1,
         error_score='raise'
     )
 
