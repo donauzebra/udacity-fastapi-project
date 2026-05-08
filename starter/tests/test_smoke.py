@@ -144,6 +144,7 @@ def test_pytest_runs():
     """Sanity-check that pytest can discover and execute tests."""
     assert True
 
+
 def test_training_pipeline_runs(sample_data, sample_config):
     """Validate end-to-end training and inference on fixture data."""
     from starter.ml.data import process_data
