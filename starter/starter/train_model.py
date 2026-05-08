@@ -8,7 +8,7 @@ from sklearn.model_selection import train_test_split
 
 # Add the necessary imports for the starter code.
 from ml.data import process_data
-from ml.model import train_model
+from ml.model import train_model, inference, compute_model_metrics
 
 # Configuration
 BASE_DIR = Path(__file__).resolve().parent
@@ -53,5 +53,10 @@ X_test, y_test, encoder_test, lb_test = process_data(
 
 # Train and save a model.
 model = train_model(X_train, y_train)
+
+preds = inference(model, X_test)
+
+precision, recall, fbeta = compute_model_metrics(y_test, preds)
+
 with open(model_path, "wb") as file:
     pickle.dump(model, file)
