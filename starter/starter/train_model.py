@@ -13,26 +13,7 @@ from ml.model import train_model, inference, compute_model_metrics
 # Configuration
 BASE_DIR = Path(__file__).resolve().parent
 CONFIG_PATH = BASE_DIR / "config.yaml"
-
-with open(CONFIG_PATH, "r", encoding="utf-8") as f:
-    config = yaml.safe_load(f)
-
-data_path = (BASE_DIR / config["data_input_path"]).resolve()
-model_path = (BASE_DIR / config["model_output_path"]).resolve()
-
-# Add code to load in the data.
-data = pd.read_csv(data_path)
-data.columns = data.columns.str.strip()
-
-# Optional enhancement, use K-fold cross validation instead of a train-test split.
-if config["validation_method"] == "train_test":
-    train, test = train_test_split(data, test_size=0.20)
-elif config["validation_method"] == "kfold":
-    raise ValueError("K-Fold validation method is not implemented yet")
-else:
-    raise ValueError(f"Unkown validation method: {config["validation_method"]}")
-
-cat_features = [
+CAT_FEATURES = [
     "workclass",
     "education",
     "marital-status",
@@ -42,21 +23,80 @@ cat_features = [
     "sex",
     "native-country",
 ]
-X_train, y_train, encoder, lb = process_data(
-    train, categorical_features=cat_features, label="salary", training=True
-)
 
-# Proces the test data with the process_data function.
-X_test, y_test, encoder_test, lb_test = process_data(
-    test, categorical_features=cat_features, label="salary", training=False, encoder=encoder, lb=lb
-)
 
-# Train and save a model.
-model = train_model(X_train, y_train)
+def _load_config_and_paths():
+    """Load config and resolve input/output paths plus validation mode."""
+    with open(CONFIG_PATH, "r", encoding="utf-8") as f:
+        config = yaml.safe_load(f)
 
-preds = inference(model, X_test)
+    data_path = (BASE_DIR / config["data_input_path"]).resolve()
+    model_path = (BASE_DIR / config["model_output_path"]).resolve()
+    return data_path, model_path, config["validation_method"]
 
-precision, recall, fbeta = compute_model_metrics(y_test, preds)
 
-with open(model_path, "wb") as file:
-    pickle.dump(model, file)
+def _load_and_clean_data(data_path):
+    """Load input CSV data and apply basic column cleanup."""
+    data = pd.read_csv(data_path)
+    data.columns = data.columns.str.strip()
+    return data
+
+
+def _split_data(data, validation_method):
+    """Split data based on the configured validation strategy."""
+    if validation_method == "train_test":
+        return train_test_split(data, test_size=0.20)
+    if validation_method == "kfold":
+        raise ValueError("K-Fold validation method is not implemented yet")
+    raise ValueError(f"Unknown validation method: {validation_method}")
+
+
+def _prepare_features(train, test):
+    """Build train/test features and labels with consistent encoders."""
+    x_train, y_train, encoder, lb = process_data(
+        train,
+        categorical_features=CAT_FEATURES,
+        label="salary",
+        training=True,
+    )
+
+    x_test, y_test, _, _ = process_data(
+        test,
+        categorical_features=CAT_FEATURES,
+        label="salary",
+        training=False,
+        encoder=encoder,
+        lb=lb,
+    )
+    return x_train, y_train, x_test, y_test
+
+
+def run_training():
+    """Run the full training pipeline and persist the trained model.
+
+    Returns
+    -------
+    tuple[float, float, float]
+        Precision, recall, and F1 score on the holdout split.
+
+    Raises
+    ------
+    ValueError
+        If the configured validation method is unsupported.
+    """
+    data_path, model_path, validation_method = _load_config_and_paths()
+    data = _load_and_clean_data(data_path)
+    train, test = _split_data(data, validation_method)
+    x_train, y_train, x_test, y_test = _prepare_features(train, test)
+    model = train_model(x_train, y_train)
+    preds = inference(model, x_test)
+    metrics = compute_model_metrics(y_test, preds)
+
+    with open(model_path, "wb") as file:
+        pickle.dump(model, file)
+
+    return metrics
+
+
+if __name__ == "__main__":
+    run_training()
