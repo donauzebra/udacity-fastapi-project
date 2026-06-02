@@ -86,11 +86,3 @@ async def model_inference(item: CensusData):
     preds = inference(_MODEL, X_prep)
 
     return {"prediction": _LB.inverse_transform(preds)[0]}
-
-
-"""
-
-## API Creation
-* Write 3 unit tests to test the API (one for the GET and two for POST, one that tests each prediction).
-
-"""
