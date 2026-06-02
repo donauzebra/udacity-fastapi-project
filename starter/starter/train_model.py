@@ -91,7 +91,7 @@ def run_training():
     metrics = compute_model_metrics(y_test, preds)
 
     with open(model_path, "wb") as file:
-        pickle.dump({"model": model, "encoder": encoder, "lb": lb}, file)
+        pickle.dump({"model": model, "features": CAT_FEATURES, "encoder": encoder, "lb": lb}, file)
 
     return metrics
 
