@@ -42,7 +42,7 @@ def _load_config_and_paths():
 
 def _load_and_clean_data(data_path):
     """Load input CSV data and apply basic column cleanup."""
-    data = pd.read_csv(data_path)
+    data = pd.read_csv(data_path, skipinitialspace=True)
     data.columns = data.columns.str.strip()
     return data
 
