@@ -89,7 +89,7 @@ async def model_inference(item: CensusData):
     )
 
     preds = inference(model, X_prep)
-    
+
     return {"prediction": lb.inverse_transform(preds)[0]}
 
 
