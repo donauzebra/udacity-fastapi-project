@@ -56,26 +56,6 @@ def _split_data(data, validation_method):
     raise ValueError(f"Unknown validation method: {validation_method}")
 
 
-def _prepare_features(train, test):
-    """Build train/test features and labels with consistent encoders."""
-    x_train, y_train, encoder, lb = process_data(
-        train,
-        categorical_features=CAT_FEATURES,
-        label="salary",
-        training=True,
-    )
-
-    x_test, y_test, _, _ = process_data(
-        test,
-        categorical_features=CAT_FEATURES,
-        label="salary",
-        training=False,
-        encoder=encoder,
-        lb=lb,
-    )
-    return x_train, y_train, x_test, y_test
-
-
 def run_training():
     """Run the full training pipeline and persist the trained model.
 
@@ -92,13 +72,26 @@ def run_training():
     data_path, model_path, validation_method = _load_config_and_paths()
     data = _load_and_clean_data(data_path)
     train, test = _split_data(data, validation_method)
-    x_train, y_train, x_test, y_test = _prepare_features(train, test)
+    x_train, y_train, encoder, lb = process_data(
+        train,
+        categorical_features=CAT_FEATURES,
+        label="salary",
+        training=True,
+    )
+    x_test, y_test, _, _ = process_data(
+        test,
+        categorical_features=CAT_FEATURES,
+        label="salary",
+        training=False,
+        encoder=encoder,
+        lb=lb,
+    )
     model = train_model(x_train, y_train)
     preds = inference(model, x_test)
     metrics = compute_model_metrics(y_test, preds)
 
     with open(model_path, "wb") as file:
-        pickle.dump(model, file)
+        pickle.dump({"model": model, "encoder": encoder, "lb": lb}, file)
 
     return metrics
 
