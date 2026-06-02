@@ -16,6 +16,7 @@ app = FastAPI(
     version="1.0.0",
 )
 
+
 # Define a GET on the specified endpoint.
 @app.get("/")
 async def say_hello():
@@ -58,6 +59,7 @@ class CensusData(BaseModel):
     hours_per_week: int = Field(alias="hours-per-week")
     native_country: str = Field(alias="native-country")
 
+
 @app.post("/inference/")
 async def model_inference(item: CensusData):
     _CONFIG_PATH = Path(__file__).resolve().parent / "starter" / "config.yaml"
@@ -84,10 +86,10 @@ async def model_inference(item: CensusData):
         training=False,
         encoder=encoder,
         lb=lb,
-    ) 
+    )
 
     preds = inference(model, X_prep)
-        
+    
     return {"prediction": lb.inverse_transform(preds)[0]}
 
 
