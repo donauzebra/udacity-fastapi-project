@@ -5,12 +5,14 @@ from starter.main import app
 
 client = TestClient(app)
 
+
 def test_get_message():
     response = client.get("/")
     assert response.status_code == 200
     assert response.json()["greeting"] == "Hello World!"
 
-def test_post_inference_high():    
+
+def test_post_inference_high():
     test_data = {
          "age": 41,
          "workclass": "State-gov",
@@ -29,6 +31,7 @@ def test_post_inference_high():
          }
     response = client.post("/inference/", json=test_data)
     assert response.status_code == 200
+
 
 def test_post_inference_low():
     pass
