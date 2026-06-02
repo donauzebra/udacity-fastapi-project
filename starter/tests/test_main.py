@@ -31,7 +31,26 @@ def test_post_inference_high():
          }
     response = client.post("/inference/", json=test_data)
     assert response.status_code == 200
+    assert response.json()["prediction"] == ">50K"
 
 
 def test_post_inference_low():
-    pass
+    test_data = {
+         "age": 41,
+         "workclass": "State-gov",
+         "fnlgt": 77516,
+         "education": "Bachelors",
+         "education-num": 13,
+         "marital-status": "Married-civ-spouse",
+         "occupation": "Exec-managerial",
+         "relationship": "Husband",
+         "race": "White",
+         "sex": "Male",
+         "capital-gain": 5000,
+         "capital-loss": 0,
+         "hours-per-week": 40,
+         "native-country": "United-States"
+         }
+    response = client.post("/inference/", json=test_data)
+    assert response.status_code == 200
+    assert response.json()["prediction"] == "<=50K"
