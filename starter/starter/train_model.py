@@ -95,5 +95,8 @@ def run_training():
 
 
 if __name__ == "__main__":
-    run_training()
+    precision, recall, f1 = run_training()
     print("Training finished!")
+    print(f"Precision: {precision:.4f}")
+    print(f"Recall:    {recall:.4f}")
+    print(f"F1-Score:  {f1:.4f}")
