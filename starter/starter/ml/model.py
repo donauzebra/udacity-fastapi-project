@@ -88,8 +88,8 @@ def inference(model, X):
     return preds
 
 
-def save_model(model, encoder, lb, path):
-    """Saves the trained model, the encoders and the label binarizer to disk.
+def save_model(model, encoder, lb, features, path):
+    """Saves model, encoders, features and label binarizer to disk.
 
     Inputs
     ------
@@ -99,9 +99,11 @@ def save_model(model, encoder, lb, path):
         Fitted categorical encoder.
     lb : sklearn.preprocessing.LabelBinarizer
         Fitted label binarizer.
+    features : list[str]
+        List of categorical feature names used during training.
     path : str or Path
         Destination file path (pickle format).
     """
     with open(path, "wb") as f:
-        pickle.dump({"model": model, "encoder": encoder, "lb": lb}, f)
+        pickle.dump({"model": model, "encoder": encoder, "lb": lb, "features": features}, f)
 

@@ -89,7 +89,7 @@ def run_training():
     preds = inference(model, x_test)
     metrics = compute_model_metrics(y_test, preds)
 
-    save_model(model, encoder, lb, model_path)
+    save_model(model, encoder, lb, CAT_FEATURES, model_path)
 
     return metrics
 
