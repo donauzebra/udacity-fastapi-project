@@ -1,3 +1,4 @@
+import pickle
 from sklearn.metrics import fbeta_score, precision_score, recall_score
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import RandomizedSearchCV
@@ -85,3 +86,22 @@ def inference(model, X):
     preds = model.predict(X)
 
     return preds
+
+
+def save_model(model, encoder, lb, path):
+    """Saves the trained model, the encoders and the label binarizer to disk.
+
+    Inputs
+    ------
+    model : RandomForestClassifier
+        Trained machine learning model.
+    encoder : sklearn.preprocessing.OneHotEncoder
+        Fitted categorical encoder.
+    lb : sklearn.preprocessing.LabelBinarizer
+        Fitted label binarizer.
+    path : str or Path
+        Destination file path (pickle format).
+    """
+    with open(path, "wb") as f:
+        pickle.dump({"model": model, "encoder": encoder, "lb": lb}, f)
+

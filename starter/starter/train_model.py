@@ -1,7 +1,6 @@
 """Train and evaluate the census salary model, then stores the trained model."""
 
 from pathlib import Path
-import pickle
 import pandas as pd
 import yaml
 from sklearn.model_selection import train_test_split
@@ -9,11 +8,11 @@ from sklearn.model_selection import train_test_split
 # Add the necessary imports for the starter code.
 try:
     from .ml.data import process_data
-    from .ml.model import train_model, inference, compute_model_metrics
+    from .ml.model import train_model, inference, compute_model_metrics, save_model
 except ImportError:
     # Fallback for direct script execution from the package directory.
     from ml.data import process_data
-    from ml.model import train_model, inference, compute_model_metrics
+    from ml.model import train_model, inference, compute_model_metrics, save_model
 
 # Configuration
 BASE_DIR = Path(__file__).resolve().parent
@@ -90,8 +89,7 @@ def run_training():
     preds = inference(model, x_test)
     metrics = compute_model_metrics(y_test, preds)
 
-    with open(model_path, "wb") as file:
-        pickle.dump({"model": model, "features": CAT_FEATURES, "encoder": encoder, "lb": lb}, file)
+    save_model(model, encoder, lb, model_path)
 
     return metrics
 
