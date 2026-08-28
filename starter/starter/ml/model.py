@@ -2,7 +2,10 @@ import pickle
 from sklearn.metrics import fbeta_score, precision_score, recall_score
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import RandomizedSearchCV
-from ml.data import process_data
+try:
+    from .data import process_data
+except ImportError:
+    from ml.data import process_data
 
 
 def train_model(X_train, y_train):
