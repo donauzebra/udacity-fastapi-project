@@ -1,4 +1,4 @@
-import pickle
+﻿import pickle
 from sklearn.metrics import fbeta_score, precision_score, recall_score
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import RandomizedSearchCV
@@ -116,14 +116,13 @@ def compute_model_slice_metrics(model, encoder, lb, df, features, sel_feature, o
 
     if sel_feature not in features:
         raise ValueError(f"'{sel_feature}' is not in features: {features}")
-    
+
     feature_values = df[sel_feature].unique()
 
     content = []
 
     for feature_value in feature_values:
         test = df[df[sel_feature] == feature_value]
-
 
         x_test, y_test, _, _ = process_data(
             test,
@@ -154,6 +153,5 @@ def compute_model_slice_metrics(model, encoder, lb, df, features, sel_feature, o
             f.write(f"recall: {recall}\n")
             f.write(f"f1_score: {f1_score}\n")
             f.write("\n")
-    
-    return content
 
+    return content
