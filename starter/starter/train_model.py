@@ -8,11 +8,11 @@ from sklearn.model_selection import train_test_split
 # Add the necessary imports for the starter code.
 try:
     from .ml.data import process_data
-    from .ml.model import train_model, inference, compute_model_metrics, save_model
+    from .ml.model import train_model, inference, compute_model_metrics, save_model, compute_model_slice_metrics
 except ImportError:
     # Fallback for direct script execution from the package directory.
     from ml.data import process_data
-    from ml.model import train_model, inference, compute_model_metrics, save_model
+    from ml.model import train_model, inference, compute_model_metrics, save_model, compute_model_slice_metrics
 
 # Configuration
 BASE_DIR = Path(__file__).resolve().parent
@@ -90,6 +90,12 @@ def run_training():
     metrics = compute_model_metrics(y_test, preds)
 
     save_model(model, encoder, lb, CAT_FEATURES, model_path)
+
+    slice_output_path = (BASE_DIR / "slice_output.txt").resolve()
+    for feature in CAT_FEATURES:
+        compute_model_slice_metrics(
+            model, encoder, lb, test, CAT_FEATURES, feature, output_path=slice_output_path
+        )
 
     return metrics
 

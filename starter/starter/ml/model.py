@@ -2,6 +2,7 @@ import pickle
 from sklearn.metrics import fbeta_score, precision_score, recall_score
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import RandomizedSearchCV
+from ml.data import process_data
 
 
 def train_model(X_train, y_train):
@@ -106,4 +107,50 @@ def save_model(model, encoder, lb, features, path):
     """
     with open(path, "wb") as f:
         pickle.dump({"model": model, "encoder": encoder, "lb": lb, "features": features}, f)
+
+
+def compute_model_slice_metrics(model, encoder, lb, df, features, sel_feature, output_path="slice_output.txt"):
+
+    if sel_feature not in features:
+        raise ValueError(f"'{sel_feature}' is not in features: {features}")
+    
+    feature_values = df[sel_feature].unique()
+
+    content = []
+
+    for feature_value in feature_values:
+        test = df[df[sel_feature] == feature_value]
+
+
+        x_test, y_test, _, _ = process_data(
+            test,
+            categorical_features=features,
+            label="salary",
+            training=False,
+            encoder=encoder,
+            lb=lb,
+        )
+
+        preds = inference(model, x_test)
+        precision, recall, f1_score = compute_model_metrics(y_test, preds)
+
+        content.append(
+            {
+                "feature": sel_feature,
+                "feature_value": feature_value,
+                "precision": precision,
+                "recall": recall,
+                "f1_score": f1_score,
+            }
+        )
+
+        with open(output_path, "a", encoding="utf-8") as f:
+            f.write(f"feature: {sel_feature}\n")
+            f.write(f"feature_value: {feature_value}\n")
+            f.write(f"precision: {precision}\n")
+            f.write(f"recall: {recall}\n")
+            f.write(f"f1_score: {f1_score}\n")
+            f.write("\n")
+    
+    return content
 
